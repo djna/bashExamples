@@ -1,0 +1,5 @@
+# Write a message to stderr
+
+function toStderr(){
+   echo "$$: $@" >&2
+}

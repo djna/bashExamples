@@ -1,0 +1,35 @@
+#!/bin/bash
+
+
+
+
+#
+function printAll(){
+    echo "$1 A=$A, B=$B, C=$C, X=$X"
+}
+
+A=15
+B=3
+C=120
+
+X=$(( C - (A * B )))
+
+printAll "calculate"
+
+(( X++, A+=B ))
+
+printAll "increment"
+
+if (( A > B)); then
+    printAll "A is bigger than B"
+else
+    printAll "A is smaller than B"
+fi
+
+
+
+
+
+
+
+

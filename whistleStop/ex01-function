@@ -1,0 +1,18 @@
+#!/bin/bash
+
+function myFunction(){
+     echo "entry to function: ${X}"
+     X="changed"
+     echo "after assignmentn: ${X}"
+}
+
+X="myString"
+
+echo "original ${X}"
+
+myFunction
+
+echo "after function call ${X}"
+
+
+
