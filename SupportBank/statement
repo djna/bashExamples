@@ -1,0 +1,22 @@
+#!/bin/bash
+
+
+transactionFile=$1
+
+./getPeople | while read n  
+do 
+   
+   credits=$( 
+       (echo "0.0" && join -t , -1 1 -2 2 -o 2.5 <(echo "$n") <(sort -t , -k 2 $transactionFile) ) | 
+        paste -sd+ - | bc
+    )
+
+    debits=$(
+        (echo "0.0" && join -t , -1 1 -2 3 -o 2.5 <(echo "$n") <(sort -t , -k 3 $transactionFile) ) | 
+        paste -sd+ -  | bc || echo "0"
+     ) 
+     balance=$( echo "$credits-$debits" | bc)
+    echo "$n $credits, -$debits, $balance"
+done
+
+
