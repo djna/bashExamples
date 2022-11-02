@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "in process ${$} XVAR = :${XVAR}:"
+
+XVAR=scriptChangedIt
+
+echo "now XVAR = :${XVAR}:"

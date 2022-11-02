@@ -1,0 +1,18 @@
+#!/bin/bash
+
+function myFunction(){
+     echo "entry to function:- :${XVAR}:"
+     XVAR="changed"
+     echo "after assignmentn:- :${XVAR}:"
+}
+
+XVAR="myString"
+
+echo "original ${XVAR}"
+
+myFunction
+
+echo "after function call:- :${XVAR}:"
+
+
+
