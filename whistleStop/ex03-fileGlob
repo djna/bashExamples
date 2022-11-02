@@ -6,12 +6,17 @@
 # 2> to redirect stderr
 # && and ||
 
-N='*.txt'
+N='../Gutenberg/*.txt'
 echo 'N is ${N} in single quotes'
 echo "N is ${N} in double quotes"
 echo N is ${N} without quotes
+
+echo
+echo "search for $N"
 F=$(ls $N 2>/dev/null ) && echo "found $F" || echo "no $N"
 
 N='*.zzz'
+echo
+echo "search for $N"
 F=$(ls $N 2>/dev/null ) && echo "found $F" || echo "no $N"
 
