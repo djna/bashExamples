@@ -1,7 +1,0 @@
-
-# zsh has an fpath capability
-# for bash, source files like this from .profile or .bashrc
-
-function oneFn () {
-    echo "I am a function"
-}

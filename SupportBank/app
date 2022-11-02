@@ -1,0 +1,30 @@
+#!/bin/bash
+
+function prompt(){
+    echo "Quit, or List All, or List account: "
+}
+
+prompt
+
+while read command arguments
+do
+    
+    case "$command" in
+        "List")
+            if [[ "$arguments" == "All" ]]; then
+                echo "All"
+                ./statement
+            else
+                echo "one $arguments"
+                ./onePerson "$arguments"
+            fi
+        ;;
+        "Quit")
+            break
+        ;;
+        *)
+           echo "$command not understood, List or Quit"
+        ;;
+    esac 
+    prompt
+done
