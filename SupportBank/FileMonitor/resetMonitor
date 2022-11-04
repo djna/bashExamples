@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Reset file monitor
+# Clears down output directories and creates a new set of inout files.
+
+
+function clearOldData() {
+    DATADIR=data
+
+    echo "Before"
+    find $DATADIR -ls
+
+    rm -f $DATADIR/input/*.log
+    rm -f $DATADIR/reports/*.txt
+    rm -f $DATADIR/badFiles/*.log
+    rm -f $DATADIR/processedFiles/*.log
+
+    echo "\nAfter"
+    #find $DATADIR/input $DATADIR/reports $DATADIR/badFiles $DATAFIR/processedFiles -ls
+    find $DATADIR -ls
+}
+
+function createInput() {
+    DATADIR=data
+
+    local SRC=${1:-"$DATADIR/sampleInput.txt"}
+
+    if [[ ! -f "$SRC" ]]; then
+        echo "Date source $SRC not found."
+        return 1
+    fi
+
+    if [[ ! -d $DATADIR/input ]]; then
+        mkdir $DATADIR/input
+    fi
+
+
+    echo "Loading from $SRC"
+
+    typeset -i lineCount=0
+    typeset -i badCount=0
+
+    while IFS=, read branch count; do
+        (( lineCount++ ))
+
+        if [[ -n "$branch" ]] && [[ -n "$count" ]] ; then 
+            echo ":$branch: has :$count:"
+            # allows for several files per branch
+            echo "$branch, $count" > "$DATADIR/input/$branch.$lineCount.log"
+        else
+            (( badCount++ ))
+            echo "bad line $linecount"
+        fi
+    done < $SRC
+
+    echo "Read $lineCount lines from $SRC, $badCount were invalid"
+
+    ls -lrt $DATADIR/input
+
+}
+
+echo "Removing old output and creating fresh set of input data ... "
+
+if clearOldData && createInput; then
+    echo "... complete."
+else
+    echo "... Failed!"
+fi
+
+
+
+
