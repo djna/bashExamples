@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# Process logs
+#
+# Summarise statistics for current set of logs in input directory 
+# Write report to a file in reports directory
+#
+# Move any defective files to badFiles directory
+#
+# Move successfully processed files to processedFiles directory
+#
+
+
+
+INPUT_DIR=data/input
+REPORT_DIR=data/reports
+BAD_DIR=data/badFiles
+GOOD_DIR=data/processedFiles
+
+for dir in $INPUT_DIR $REPORT_DIR $BAD_DIR $GOOD_DIR
+do
+if [[ ! -d "$dir" ]]; then
+    mkdir "$dir"
+fi
+done
+
+export REPORT_FILE=$REPORT_DIR/branchReport.$(date +%s).txt
+
+
+declare -i badCount=0
+declare -i fileCount=0
+declare -A branchTotals 
+
+# utility, check whether $1 is an integer
+function intCheck() {
+    
+    typeset -i branchCount
+    # attemot assignment, discard error message, if success will echo value
+    check=$(branchCount="$1" && echo "$branchCount" ) 2>/dev/null
+    
+    # if we got a non null valuem assignment worked
+    test -n "$check"
+
+    # returns exit code of last command
+}
+
+# main processing loop, iterate logfiles
+for logFile in $INPUT_DIR/*.log; do
+    # if wildcard above doesn't match any files it will not be expanded
+    # could be fooled by a file called "*.log" but let not over-complicate things!
+    if [[  -e $logfile ]; then
+        processOneLogFile "$logFile"
+    else
+        echo "no logfiles to process in $INPUT_DIR" >&2
+    fi
+done
+
+# processing for one file, name passed in $1
+function processOneLogFile()  {
+    oneFile=$i
+    ((fileCount++))
+    local IFS=,
+    read branch count < $oneFile
+    # echo "$logFile :$branch: :$count:"
+    if [ -z "$branch" ] || [ -z "$count" ]; then
+        echo "Invalid record in $oneFile" >&2
+        mv $oneFile $BAD_DIR
+        ((badCount++))
+    
+    elif intCheck "$count"; then
+        #echo "$branch has $count"
+
+        currentTotal="${branchTotals[$branch]:=0}"
+        #echo "Current $currentTotal"
+        (( currentTotal += count ))
+        branchTotals[$branch]=$currentTotal
+        mv $logFile $GOOD_DIR
+    else 
+        echo "Invalid count in $oneFile" >&2
+        mv $oneFile $BAD_DIR
+        ((badCount++))
+    fi
+ 
+}
+
+echo "Processed $fileCount files, $badCount were bad"  >$REPORT_FILE
+
+for branch total in ${(kv)branchTotals}; do
+    echo "$branch $total"
+done >>$REPORT_FILE
+
+echo "Created report $REPORT_FILE for $#branchTotals branches"
+
+
+
