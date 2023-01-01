@@ -34,30 +34,16 @@ declare -A branchTotals
 # utility, check whether $1 is an integer
 function intCheck() {
     
-    typeset -i branchCount
-    # attemot assignment, discard error message, if success will echo value
-    check=$(branchCount="$1" && echo "$branchCount" ) 2>/dev/null
-    
-    # if we got a non null valuem assignment worked
-    test -n "$check"
+    test "$1" -eq "$1" 2>/dev/null
 
     # returns exit code of last command
 }
 
-# main processing loop, iterate logfiles
-for logFile in $INPUT_DIR/*.log; do
-    # if wildcard above doesn't match any files it will not be expanded
-    # could be fooled by a file called "*.log" but let not over-complicate things!
-    if [[  -e $logfile ]]; then
-        processOneLogFile "$logFile"
-    else
-        echo "no logfiles to process in $INPUT_DIR" >&2
-    fi
-done
+
 
 # processing for one file, name passed in $1
 function processOneLogFile()  {
-    oneFile=$i
+    oneFile=$1
     ((fileCount++))
     local IFS=,
     read branch count < $oneFile
@@ -83,13 +69,24 @@ function processOneLogFile()  {
  
 }
 
+# main processing loop, iterate logfiles
+for logFile in $INPUT_DIR/*.log; do
+    # if wildcard above doesn't match any files it will not be expanded
+    # could be fooled by a file called "*.log" but let not over-complicate things!
+    if [[  -e $logFile ]]; then
+        processOneLogFile "$logFile"
+    else
+        echo "no logfiles to process in $INPUT_DIR" >&2
+    fi
+done
+
 echo "Processed $fileCount files, $badCount were bad"  >$REPORT_FILE
 
 for branch in ${branchTotals[*]}; do
     echo "$branch $total"
 done >>$REPORT_FILE
 
-echo "Created report $REPORT_FILE for $#branchTotals branches"
+echo "Created report $REPORT_FILE for $# branchTotals branches"
 
 
 
