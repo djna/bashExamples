@@ -48,7 +48,7 @@ function intCheck() {
 for logFile in $INPUT_DIR/*.log; do
     # if wildcard above doesn't match any files it will not be expanded
     # could be fooled by a file called "*.log" but let not over-complicate things!
-    if [[  -e $logfile ]; then
+    if [[  -e $logfile ]]; then
         processOneLogFile "$logFile"
     else
         echo "no logfiles to process in $INPUT_DIR" >&2
@@ -85,7 +85,7 @@ function processOneLogFile()  {
 
 echo "Processed $fileCount files, $badCount were bad"  >$REPORT_FILE
 
-for branch total in ${(kv)branchTotals}; do
+for branch in ${branchTotals[*]}; do
     echo "$branch $total"
 done >>$REPORT_FILE
 
