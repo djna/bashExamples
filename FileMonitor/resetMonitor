@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Reset file monitor
-# Clears down output directories and creates a new set of inout files.
+# Clears down output directories and creates a new set of input files.
 
 
 function clearOldData() {
@@ -15,15 +15,14 @@ function clearOldData() {
     rm -f $DATADIR/badFiles/*.log
     rm -f $DATADIR/processedFiles/*.log
 
-    echo "\nAfter"
-    #find $DATADIR/input $DATADIR/reports $DATADIR/badFiles $DATAFIR/processedFiles -ls
+    echo -e "\nAfter"
     find $DATADIR -ls
 }
 
 function createInput() {
     DATADIR=data
 
-    local SRC=${1:-"$DATADIR/sampleInput.txt"}
+    local SRC="$DATADIR/sampleInput.txt"
 
     if [[ ! -f "$SRC" ]]; then
         echo "Date source $SRC not found."
@@ -37,8 +36,8 @@ function createInput() {
 
     echo "Loading from $SRC"
 
-    typeset -i lineCount=0
-    typeset -i badCount=0
+    lineCount=0
+    badCount=0
 
     while IFS=, read branch count; do
         (( lineCount++ ))
